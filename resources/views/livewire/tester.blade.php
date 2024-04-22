@@ -1,9 +1,16 @@
 <?php
+
 use Livewire\Volt\Component;
 
 new class extends Component {
     #[\Livewire\Attributes\Url(history: true)]
     public ?int $sync_id = null;
+
+    public function dispatch_async(): void
+    {
+        $this->sync_id = \App\Events\TestStartedAsync::commit(sync_id: null);
+        $this->redirect('/?sync_id=' . $this->sync_id);
+    }
 
     public function dispatch_sync(): void
     {
@@ -27,7 +34,10 @@ new class extends Component {
 <div class="bg-gray-100 p-6 rounded-lg shadow-lg max-w-4xl mx-auto my-4">
     <div class="flex justify-between items-center mb-4">
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" wire:click="dispatch_sync">
-            Dispatch process
+            Dispatch jobs
+        </button>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" wire:click="dispatch_async">
+            Dispatch ReactPhp
         </button>
         <p class="text-lg font-semibold text-black">
             Be sure to run horizon
@@ -49,7 +59,8 @@ new class extends Component {
             </div>
             <div>
                 <p class="text-sm">Status:</p>
-                <p class="text-lg font-semibold" :class="{'text-red-500': {{ $this->status?->requested_count }} !== {{ $this->status?->actual_count }}, 'text-green-500': {{ $this->status?->actual_count }} === {{ $this->status?->count }}">
+                <p class="text-lg font-semibold"
+                   :class="{'text-red-500': {{ $this->status?->requested_count }} !== {{ $this->status?->actual_count }}, 'text-green-500': {{ $this->status?->actual_count }} === {{ $this->status?->count }}">
                     {{ ($this->status?->requested_count === $this->status?->actual_count) ? 'Complete' : 'In Progress' }}
                 </p>
             </div>

@@ -33,7 +33,6 @@ class TestEventFired extends Event
         ['id', 'sync_id']);
 
         $count = SyncEvents::where('sync_id', $this->sync_id)->count();
-        $done = ($count === $state->requested_count);
 
         Sync::upsert([
             'id' => $this->sync_id,
@@ -44,6 +43,5 @@ class TestEventFired extends Event
         ], [
             'id'
         ]);
-
     }
 }
